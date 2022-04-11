@@ -9,6 +9,10 @@ app = Flask(__name__)
 def home():
     return 'hello from NFT-Marketplace'
 
+@app.route('/about')
+def about():
+    return 'about NFT-Marketplace'
+
 if __name__ == '__main__':
     app.run(debug=True)
 
