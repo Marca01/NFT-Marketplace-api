@@ -3,8 +3,6 @@ import base64
 from flask import Flask, request, jsonify, send_file
 import cv2     # Thư viện OpenCV
 import numpy as np   # Thư viện numy để làm việc dữ liệu kiểu mảng
-import matplotlib.pyplot as plt # import thư viện matplotlib để vẽ ảnh
-import matplotlib.image as mpimg
 from PIL import Image
 import json
 from base64 import b64encode
