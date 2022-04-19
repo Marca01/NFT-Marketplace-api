@@ -8,8 +8,10 @@ import json
 from base64 import b64encode
 import io
 import os
+from flask_cors import CORS
 
 app = Flask(__name__)
+CORS(app)
 # app.config['ENV'] = 'development'
 # app.config['DEBUG'] = True
 # app.config['TESTING'] = True
