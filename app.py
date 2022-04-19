@@ -25,6 +25,8 @@ def about():
 @app.route('/edit/sharpen', methods=['POST'])
 def sharpenImg():
     imageFile = request.files.get('image')
+    print(imageFile)
+    print(f'filename: {imageFile.filename}')
     imageFile.save(os.path.join('images', imageFile.filename))
     # image = Image.open(imageFile)
 
