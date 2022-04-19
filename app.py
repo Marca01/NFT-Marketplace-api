@@ -58,7 +58,7 @@ def sharpenImg():
     # return send_file(image, mimetype='image/jpg', as_attachment=True, attachment_filename=path)
 
     # encode base64 image
-    img_to_base64 = Image.open(os.path.join('images', imageFile.filename))
+    img_to_base64 = Image.open(os.path.join('assets', 'test.jpg'))
     byte_image = io.BytesIO()
     img_to_base64.save(byte_image, format='PNG')
     byte_image_value = byte_image.getvalue()
@@ -85,7 +85,7 @@ def gaussianBlurImg():
     path = request.url_root + "assets/test.jpg"
 
     # encode base64 image
-    img_to_base64 = Image.open(os.path.join('images', imageFile.filename))
+    img_to_base64 = Image.open(os.path.join('assets', 'test.jpg'))
     byte_image = io.BytesIO()
     img_to_base64.save(byte_image, format='PNG')
     byte_image_value = byte_image.getvalue()
