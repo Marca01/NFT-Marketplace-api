@@ -7,6 +7,7 @@ from PIL import Image
 import json
 from base64 import b64encode
 import io
+import os
 
 app = Flask(__name__)
 # app.config['ENV'] = 'development'
@@ -24,26 +25,13 @@ def about():
 @app.route('/edit/sharpen', methods=['POST'])
 def sharpenImg():
     imageFile = request.files.get('image')
-    image = Image.open(imageFile)
+    imageFile.save(os.path.join('images', imageFile.filename))
+    # image = Image.open(imageFile)
 
-    # base64 image
-    byte_image = io.BytesIO()
-    image.save(byte_image, format='PNG')
-    byte_image_value = byte_image.getvalue()
-    base64_image = b64encode(byte_image_value)
-    # with open('base64Img.txt', 'w') as file:
-    #     file.write(str(base64_image.decode('utf-8')))
-    # return json.dumps({'msg': 'success', 'image': str(base64_image.decode('utf-8'))}, ensure_ascii=False)
-
-
-    image = base64.b64decode(base64_image)
-    npimg = np.fromstring(image, dtype=np.uint8)
-    image = cv2.imdecode(npimg, 1)
+    image = cv2.imread(os.path.join('images', imageFile.filename))
     image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
-    # plt.figure(figsize=(20, 20))
-    # plt.subplot(1, 2, 1)
-    # plt.title("Original")
-    # plt.imshow(image)
+
+    # SHARPEN IMAGE
     kernel_sharpening = np.array([
         [-1, -1, -1, -1, -1],
         [-1, -1, -1, -1, -1],
@@ -51,12 +39,45 @@ def sharpenImg():
         [-1, -1, -1, -1, -1],
         [-1, -1, -1, -1, -1],
     ])
+
+    # GAUSSIAN BLUR
+    kernel_gaussian_blur = np.array([[-1, -1, -1],
+                                  [-1, 9, -1],
+                                  [-1, -1, -1]])
+    # smoothed = cv2.GaussianBlur(image, (247, 9), cv2.BORDER_DEFAULT)
+
     sharpened = cv2.filter2D(image, -1, kernel_sharpening)
-    return send_file(sharpened, mimetype='image/png')
-    # plt.subplot(1, 2, 2)
-    # plt.title("Image Sharpening")
-    # plt.imshow(sharpened)
-    # plt.show()
+
+    filename = 'assets/test.jpg'
+    cv2.imwrite(filename, sharpened)
+    path = request.url_root+"assets/test.jpg"
+
+    image = cv2.imread(filename)
+    # return send_file(image, mimetype='image/jpg', as_attachment=True, attachment_filename=path)
+    base64_image = str(b64encode(image).decode('utf-8'))
+    return json.dumps({'msg': 'success', 'image': base64_image}, ensure_ascii=False)
+
+@app.route('/edit/gaussianblur', methods=['POST'])
+def gaussianBlurImg():
+    imageFile = request.files.get('image')
+    imageFile.save(os.path.join('images', imageFile.filename))
+
+    image = cv2.imread(os.path.join('images', imageFile.filename))
+    image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+
+    # GAUSSIAN BLUR
+    kernel_gaussian_blur = np.array([[-1, -1, -1],
+                                     [-1, 9, -1],
+                                     [-1, -1, -1]])
+    smoothed = cv2.GaussianBlur(image, (247, 9), cv2.BORDER_DEFAULT)
+
+    filename = 'assets/test.jpg'
+    cv2.imwrite(filename, smoothed)
+    path = request.url_root + "assets/test.jpg"
+
+    image = cv2.imread(filename)
+    base64_image = str(b64encode(image).decode('utf-8'))
+    return json.dumps({'msg': 'success', 'image': base64_image}, ensure_ascii=False)
 
 if __name__ == '__main__':
     app.run(debug=True)
