@@ -7,3 +7,6 @@ opencv-python-headless==4.5.5.64
 numpy==1.22.3
 pillow==8.4.0
 flask-cors==3.0.10
+imagekitio==2.2.8
+python-dotenv==0.19.2
+scikit-image==0.18.1
