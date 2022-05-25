@@ -57,13 +57,13 @@ def resetImg():
 @app.route('/edit/sharpen', methods=['POST'])
 def sharpenImg():
     imageFile = request.files.get('image')
-    # print(f'imageFile: {imageFile}')
+    print(f'imageFile: {imageFile}')
     # image = Image.open(imageFile)
     # print(f'filename: {imageFile.filename}')
     # imageFile.save(os.path.join('images', imageFile.filename))
     # image = Image.open(imageFile)
 
-    image = io.imread(imageFile)
+    image = io.imread(imageFile, plugin='matplotlib')
     image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
 
     # SHARPEN IMAGE
