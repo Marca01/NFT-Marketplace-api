@@ -182,6 +182,140 @@ def negativeImg():
 
     return json.dumps({'msg': 'success', 'image': negative_url}, ensure_ascii=False)
 
+@app.route('/edit/sepia', methods=['POST'])
+def sepiaImg():
+    imageFile = request.files.get('image')
+    image = io.imread(imageFile)
+    image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+
+    sepia = cv2.transform(image, np.matrix([[0.393, 0.769, 0.189],
+                                        [0.349, 0.686, 0.168],
+                                        [0.272, 0.534, 0.131]]))
+    sepia[np.where(sepia > 255)] = 255
+    sepia = cv2.cvtColor(sepia, cv2.COLOR_RGB2BGR)
+
+    cv2.imwrite('images/transformed.jpg', sepia)
+
+    # encode base64 image
+    img_to_base64 = Image.open(os.path.join('images', 'transformed.jpg'))
+    byte_image = iioo.BytesIO()
+    img_to_base64.save(byte_image, format='PNG')
+    byte_image_value = byte_image.getvalue()
+    base64_image = str(b64encode(byte_image_value).decode('utf-8'))
+
+    imagekit.upload_file(
+        file=base64_image,  # required
+        file_name=f"{imageFile.filename}",  # required
+        options={
+            "folder": "/Sepia_images/",
+            "use_unique_file_name": False,
+        }
+    )
+
+    sepia_url = imagekit.url({
+        "path": f"/Sepia_images/{imageFile.filename}",
+        "url_endpoint": "https://ik.imagekit.io/Khale/"
+    })
+
+    return json.dumps({'msg': 'success', 'image': sepia_url}, ensure_ascii=False)
+
+@app.route('/edit/contrast', methods=['POST'])
+def contrastImg():
+    imageFile = request.files.get('image')
+    image = io.imread(imageFile)
+    image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+
+    zero = np.zeros(image.shape, image.dtype)
+    contrast = cv2.addWeighted(image, 5, zero, 0, 0)
+
+    cv2.imwrite('images/transformed.jpg', contrast)
+
+    # encode base64 image
+    img_to_base64 = Image.open(os.path.join('images', 'transformed.jpg'))
+    byte_image = iioo.BytesIO()
+    img_to_base64.save(byte_image, format='PNG')
+    byte_image_value = byte_image.getvalue()
+    base64_image = str(b64encode(byte_image_value).decode('utf-8'))
+
+    imagekit.upload_file(
+        file=base64_image,  # required
+        file_name=f"{imageFile.filename}",  # required
+        options={
+            "folder": "/Contrast_images/",
+            "use_unique_file_name": False,
+        }
+    )
+
+    contrast_url = imagekit.url({
+        "path": f"/Contrast_images/{imageFile.filename}",
+        "url_endpoint": "https://ik.imagekit.io/Khale/"
+    })
+
+    return json.dumps({'msg': 'success', 'image': contrast_url}, ensure_ascii=False)
+
+@app.route('/edit/gray', methods=['POST'])
+def grayImg():
+    imageFile = request.files.get('image')
+    image = io.imread(imageFile)
+    gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+
+    cv2.imwrite('images/transformed.jpg', gray)
+
+    # encode base64 image
+    img_to_base64 = Image.open(os.path.join('images', 'transformed.jpg'))
+    byte_image = iioo.BytesIO()
+    img_to_base64.save(byte_image, format='PNG')
+    byte_image_value = byte_image.getvalue()
+    base64_image = str(b64encode(byte_image_value).decode('utf-8'))
+
+    imagekit.upload_file(
+        file=base64_image,  # required
+        file_name=f"{imageFile.filename}",  # required
+        options={
+            "folder": "/Gray_images/",
+            "use_unique_file_name": False,
+        }
+    )
+
+    gray_url = imagekit.url({
+        "path": f"/Gray_images/{imageFile.filename}",
+        "url_endpoint": "https://ik.imagekit.io/Khale/"
+    })
+
+    return json.dumps({'msg': 'success', 'image': gray_url}, ensure_ascii=False)
+
+@app.route('/edit/denoise', methods=['POST'])
+def denoiseImg():
+    imageFile = request.files.get('image')
+    image = io.imread(imageFile)
+    
+    denoised = cv2.fastNlMeansDenoisingColored(image, None, 7, 7, 7, 21)
+
+    cv2.imwrite('images/transformed.jpg', denoised)
+
+    # encode base64 image
+    img_to_base64 = Image.open(os.path.join('images', 'transformed.jpg'))
+    byte_image = iioo.BytesIO()
+    img_to_base64.save(byte_image, format='PNG')
+    byte_image_value = byte_image.getvalue()
+    base64_image = str(b64encode(byte_image_value).decode('utf-8'))
+
+    imagekit.upload_file(
+        file=base64_image,  # required
+        file_name=f"{imageFile.filename}",  # required
+        options={
+            "folder": "/Denoised_images/",
+            "use_unique_file_name": False,
+        }
+    )
+
+    denoised_url = imagekit.url({
+        "path": f"/Denoised_images/{imageFile.filename}",
+        "url_endpoint": "https://ik.imagekit.io/Khale/"
+    })
+
+    return json.dumps({'msg': 'success', 'image': denoised_url}, ensure_ascii=False)
+
 if __name__ == '__main__':
     app.run(debug=True)
 
