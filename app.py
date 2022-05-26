@@ -288,6 +288,7 @@ def grayImg():
 def denoiseImg():
     imageFile = request.files.get('image')
     image = io.imread(imageFile)
+    image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
     
     denoised = cv2.fastNlMeansDenoisingColored(image, None, 7, 7, 7, 21)
 
