@@ -119,9 +119,6 @@ def gaussianBlurImg():
     image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
 
     # GAUSSIAN BLUR
-    kernel_gaussian_blur = np.array([[-1, -1, -1],
-                                     [-1, 9, -1],
-                                     [-1, -1, -1]])
     smoothed = cv2.GaussianBlur(image, (247, 9), cv2.BORDER_DEFAULT)
 
     cv2.imwrite('images/transformed.jpg', smoothed)
@@ -226,7 +223,7 @@ def contrastImg():
     image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
 
     zero = np.zeros(image.shape, image.dtype)
-    contrast = cv2.addWeighted(image, 5, zero, 0, 0)
+    contrast = cv2.addWeighted(image, 0.7, zero, 0.5, 0)
 
     cv2.imwrite('images/transformed.jpg', contrast)
 
@@ -289,7 +286,7 @@ def denoiseImg():
     imageFile = request.files.get('image')
     image = io.imread(imageFile)
     image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
-    
+
     denoised = cv2.fastNlMeansDenoisingColored(image, None, 7, 7, 7, 21)
 
     cv2.imwrite('images/transformed.jpg', denoised)
